@@ -3,7 +3,7 @@ $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require "flowmailer-rails/version"
 
 Gem::Specification.new do |spec|
-  spec.name          = "FlowmailerRails"
+  spec.name          = "flowmailer-rails"
   spec.version       = FlowmailerRails::VERSION
   spec.authors       = ["Jonas Brusman"]
   spec.email         = ["jonas@teamtailor.com"]
