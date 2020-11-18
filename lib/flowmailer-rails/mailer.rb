@@ -14,13 +14,11 @@ module FlowmailerRails
 
     def deliver!(rails_mail)
       MailConverter.new(rails_mail).recipients_as_json.each do |json|
-        puts "**** hej 1"
         response = api_client.post(path, json, authorization_header)
-        puts "**** hej 2"
-        puts response.status
-        puts response.body
-        puts "**** hej 3"
         raise DeliveryError.new(response.body) unless response.success?
+
+        rails_mail.message_id = response.headers["location"].split("/").last
+        "#{response.status}: #{response.body}"
       end
     end
 
