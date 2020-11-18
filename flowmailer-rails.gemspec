@@ -28,8 +28,12 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency('actionmailer', ">= 3.0.0")
   spec.add_dependency('faraday', ">= 0.7.4", "< 1.0")
+  spec.add_dependency('faraday_middleware')
 
   spec.add_development_dependency "bundler", "~> 2.0"
   spec.add_development_dependency "rake", "~> 13.0"
   spec.add_development_dependency "rspec", "~> 3.0"
+  spec.add_development_dependency "rspec-json_expectations", "~> 2.2"
+  spec.add_development_dependency "simplecov", "~> 0.19"
+  spec.add_development_dependency "webmock", "~> 3.10.0"
 end

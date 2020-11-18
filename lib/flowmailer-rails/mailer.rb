@@ -1,3 +1,6 @@
+require 'faraday'
+require 'faraday_middleware'
+
 module FlowmailerRails
   class Mailer
     class NoAccessTokenError < StandardError; end
@@ -14,7 +17,7 @@ module FlowmailerRails
 
     def deliver!(rails_mail)
       MailConverter.new(rails_mail).recipients_as_json.each do |json|
-        response = api_client.post(path, json, authorization_header)
+        response = submit_message(path, json, authorization_header)
         raise DeliveryError.new(response.body) unless response.success?
 
         rails_mail.message_id = response.headers["location"].split("/").last
@@ -30,6 +33,10 @@ module FlowmailerRails
 
     def authorization_header
       {Authorization: "Bearer #{access_token}"}
+    end
+
+    def submit_message(*args)
+      api_client.post(*args)
     end
 
     def api_client

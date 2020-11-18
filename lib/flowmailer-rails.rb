@@ -8,8 +8,10 @@ module FlowmailerRails
   end
 end
 
+# :nocov:
 if defined?(Rails)
   require 'flowmailer-rails/railtie'
 else
   FlowmailerRails.install
 end
+# :nocov:

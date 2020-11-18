@@ -1,7 +1,22 @@
 require "bundler/setup"
-require "flowmailer-rails"
+require "rspec/json_expectations"
+require 'webmock/rspec'
+require 'simplecov'
 
+require 'support/api_stubs'
+
+SimpleCov.at_exit do
+  SimpleCov.result.format!
+  SimpleCov.minimum_coverage 100
+end
+SimpleCov.start do
+  add_filter '/spec/'
+end
+
+require "flowmailer-rails"
 RSpec.configure do |config|
+  include ApiStubs
+
   # Enable flags like --only-failures and --next-failure
   config.example_status_persistence_file_path = ".rspec_status"
 
