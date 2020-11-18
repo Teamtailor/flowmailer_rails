@@ -4,7 +4,7 @@ RSpec.describe FlowmailerRails::MailConverter do
       to: "john.doe@example.com",
       from: "no-reply@example.com",
       message_id: "1337",
-      date: Time.parse("2010-01-01 12:00")
+      date: Time.parse("2010-01-01T12:00:00+00:00").utc
     )
   }
   let(:subject) { described_class.new(mail) }
@@ -20,7 +20,7 @@ RSpec.describe FlowmailerRails::MailConverter do
           messageType: "EMAIL",
           senderAddress: "no-reply@example.com",
           recipientAddress: "john.doe@example.com",
-          mimedata: "RGF0ZTogRnJpLCAwMSBKYW4gMjAxMCAxMjowMDowMCArMDEwMA0KRnJvbTog\nbm8tcmVwbHlAZXhhbXBsZS5jb20NClRvOiBqb2huLmRvZUBleGFtcGxlLmNv\nbQ0KTWVzc2FnZS1JRDogMTMzNw0KTWltZS1WZXJzaW9uOiAxLjANCkNvbnRl\nbnQtVHlwZTogdGV4dC9wbGFpbg0KQ29udGVudC1UcmFuc2Zlci1FbmNvZGlu\nZzogN2JpdA0KDQo=\n"
+          mimedata: "RGF0ZTogRnJpLCAwMSBKYW4gMjAxMCAxMjowMDowMCArMDAwMA0KRnJvbTog\nbm8tcmVwbHlAZXhhbXBsZS5jb20NClRvOiBqb2huLmRvZUBleGFtcGxlLmNv\nbQ0KTWVzc2FnZS1JRDogMTMzNw0KTWltZS1WZXJzaW9uOiAxLjANCkNvbnRl\nbnQtVHlwZTogdGV4dC9wbGFpbg0KQ29udGVudC1UcmFuc2Zlci1FbmNvZGlu\nZzogN2JpdA0KDQo=\n"
         )
       end
     end

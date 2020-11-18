@@ -14,6 +14,9 @@ SimpleCov.start do
 end
 
 require "flowmailer-rails"
+
+Time.zone = "UTC"
+
 RSpec.configure do |config|
   include ApiStubs
 
