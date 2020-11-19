@@ -1,5 +1,6 @@
 # FlowmailerRails
 [![Gem Version](https://badge.fury.io/rb/flowmailer_rails.svg)](https://rubygems.org/gems/flowmailer_rails)
+![Tests](https://github.com/teamtailor/flowmailer_rails/workflows/Ruby/badge.svg)
 
 Send ActionMailer emails with Flowmailer
 
