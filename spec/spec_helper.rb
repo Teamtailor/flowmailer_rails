@@ -13,7 +13,7 @@ SimpleCov.start do
   add_filter "/spec/"
 end
 
-require "flowmailer-rails"
+require "flowmailer_rails"
 
 Time.zone = "UTC"
 

@@ -1,21 +1,21 @@
 lib = File.expand_path("lib", __dir__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-require "flowmailer-rails/version"
+require "flowmailer_rails/version"
 
 Gem::Specification.new do |spec|
-  spec.name = "flowmailer-rails"
+  spec.name = "flowmailer_rails"
   spec.version = FlowmailerRails::VERSION
   spec.authors = ["Jonas Brusman"]
   spec.email = ["jonas@teamtailor.com"]
 
   spec.summary = "ActionMailer adapter for Flowmailer"
   spec.description = "Send ActionMailer messages with the Flowmailer API"
-  spec.homepage = "https://github.com/Teamtailor/flowmailer-rails"
+  spec.homepage = "https://github.com/Teamtailor/flowmailer_rails"
   spec.license = "MIT"
 
   spec.metadata["homepage_uri"] = spec.homepage
-  spec.metadata["source_code_uri"] = "https://github.com/Teamtailor/flowmailer-rails"
-  spec.metadata["changelog_uri"] = "https://github.com/Teamtailor/flowmailer-rails/blob/master/CHANGELOG.md"
+  spec.metadata["source_code_uri"] = "https://github.com/Teamtailor/flowmailer_rails"
+  spec.metadata["changelog_uri"] = "https://github.com/Teamtailor/flowmailer_rails/blob/master/CHANGELOG.md"
 
   # Specify which files should be added to the gem when it is released.
   # The `git ls-files -z` loads the files in the RubyGem that have been added into git.

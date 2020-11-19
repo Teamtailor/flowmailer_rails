@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    flowmailer-rails (0.1.0)
+    flowmailer_rails (0.1.0)
       actionmailer (>= 3.0.0)
       faraday (>= 0.7.4, < 1.0)
       faraday_middleware
@@ -134,7 +134,7 @@ PLATFORMS
 
 DEPENDENCIES
   bundler (~> 2.0)
-  flowmailer-rails!
+  flowmailer_rails!
   rake (~> 13.0)
   rspec (~> 3.0)
   rspec-json_expectations (~> 2.2)
