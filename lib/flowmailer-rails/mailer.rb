@@ -1,13 +1,13 @@
-require 'faraday'
-require 'faraday_middleware'
+require "faraday"
+require "faraday_middleware"
 
 module FlowmailerRails
   class Mailer
     class NoAccessTokenError < StandardError; end
     class DeliveryError < StandardError; end
 
-    OAUTH_ENDPOINT = "https://login.flowmailer.net"
-    API_ENDPOINT = "https://api.flowmailer.net"
+    OAUTH_ENDPOINT = "https://login.flowmailer.net".freeze
+    API_ENDPOINT = "https://api.flowmailer.net".freeze
 
     attr_accessor :settings
 
@@ -18,10 +18,9 @@ module FlowmailerRails
     def deliver!(rails_mail)
       MailConverter.new(rails_mail).recipients_as_json.each do |json|
         response = submit_message(path, json, authorization_header)
-        raise DeliveryError.new(response.body) unless response.success?
+        raise DeliveryError, response.body unless response.success?
 
         rails_mail.message_id = response.headers["location"].split("/").last
-        "#{response.status}: #{response.body}"
       end
     end
 
@@ -40,11 +39,11 @@ module FlowmailerRails
     end
 
     def api_client
-      @api_client ||= Faraday.new(url: API_ENDPOINT) do |conn|
+      @api_client ||= Faraday.new(url: API_ENDPOINT) { |conn|
         conn.request :json
         conn.response :json, content_type: /\bjson$/
         conn.adapter Faraday.default_adapter
-      end
+      }
     end
 
     def access_token
@@ -53,21 +52,21 @@ module FlowmailerRails
         client_id: settings[:client_id],
         client_secret: settings[:client_secret],
         grant_type: "client_credentials",
-        scope: "api",
+        scope: "api"
       )
       if response.success?
-        return response.body["access_token"]
+        response.body["access_token"]
       else
-        raise NoAccessTokenError.new(response.body)
+        raise NoAccessTokenError, response.body
       end
     end
 
     def oauth_client
-      @oauth_client ||= Faraday.new(url: OAUTH_ENDPOINT) do |conn|
+      @oauth_client ||= Faraday.new(url: OAUTH_ENDPOINT) { |conn|
         conn.request :url_encoded
         conn.response :json, content_type: /\bjson$/
         conn.adapter Faraday.default_adapter
-      end
+      }
     end
   end
 end

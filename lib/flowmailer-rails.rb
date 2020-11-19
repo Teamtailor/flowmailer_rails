@@ -1,6 +1,6 @@
-require 'action_mailer'
-require 'flowmailer-rails/mailer'
-require 'flowmailer-rails/mail_converter'
+require "action_mailer"
+require "flowmailer-rails/mailer"
+require "flowmailer-rails/mail_converter"
 
 module FlowmailerRails
   def self.install
@@ -10,7 +10,7 @@ end
 
 # :nocov:
 if defined?(Rails)
-  require 'flowmailer-rails/railtie'
+  require "flowmailer-rails/railtie"
 else
   FlowmailerRails.install
 end

@@ -1,12 +1,12 @@
 RSpec.describe FlowmailerRails::MailConverter do
-  let(:default_mail) {
+  let(:default_mail) do
     Mail.new(
       to: "john.doe@example.com",
       from: "no-reply@example.com",
       message_id: "1337",
       date: Time.parse("2010-01-01T12:00:00+00:00").utc
     )
-  }
+  end
   let(:subject) { described_class.new(mail) }
 
   describe "#recipients_as_json" do
@@ -26,7 +26,7 @@ RSpec.describe FlowmailerRails::MailConverter do
     end
 
     context "with multiple recipient" do
-      let(:mail) { default_mail.tap {|m| m.to = "John Doe <john@example.com>; Jane Doe <jane@example.com>" } }
+      let(:mail) { default_mail.tap { |m| m.to = "John Doe <john@example.com>; Jane Doe <jane@example.com>" } }
 
       it "returns a json object for that recipient" do
         result = subject.recipients_as_json
@@ -34,10 +34,10 @@ RSpec.describe FlowmailerRails::MailConverter do
         json2 = JSON.parse(result.second)
         expect(result.size).to eq(2)
         expect(json1).to include_json(
-          recipientAddress: "john@example.com",
+          recipientAddress: "john@example.com"
         )
         expect(json2).to include_json(
-          recipientAddress: "jane@example.com",
+          recipientAddress: "jane@example.com"
         )
       end
     end

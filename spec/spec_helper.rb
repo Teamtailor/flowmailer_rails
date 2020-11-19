@@ -1,16 +1,16 @@
 require "bundler/setup"
 require "rspec/json_expectations"
-require 'webmock/rspec'
-require 'simplecov'
+require "webmock/rspec"
+require "simplecov"
 
-require 'support/api_stubs'
+require "support/api_stubs"
 
 SimpleCov.at_exit do
   SimpleCov.result.format!
   SimpleCov.minimum_coverage 100
 end
 SimpleCov.start do
-  add_filter '/spec/'
+  add_filter "/spec/"
 end
 
 require "flowmailer-rails"

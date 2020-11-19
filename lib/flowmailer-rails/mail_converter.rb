@@ -1,4 +1,4 @@
-require 'json'
+require "json"
 
 module FlowmailerRails
   class MailConverter
@@ -18,9 +18,9 @@ module FlowmailerRails
 
     def as_json
       @json ||= {
-        messageType: 'EMAIL',
+        messageType: "EMAIL",
         mimedata: mimedata,
-        senderAddress: sender_address,
+        senderAddress: sender_address
       }
     end
 
