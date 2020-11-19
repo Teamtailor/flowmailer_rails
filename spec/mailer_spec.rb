@@ -3,6 +3,45 @@ RSpec.describe FlowmailerRails::Mailer do
   let(:response_double) { double(:response, "success?" => true, :status => 201, :body => "", :headers => {"location" => "foo/123xyz"}) }
 
   describe "#deliver!" do
+    context "with procs for access tokens" do
+      let(:subject) {
+        described_class.new(
+          account_id: 1337,
+          access_token: -> { ENV["FAKE_GLOBAL_ACCESS_TOKEN"] ||= "proc-access-token" },
+          fetch_new_access_token: -> { ENV["FAKE_GLOBAL_ACCESS_TOKEN"] = "newproc-access-token" }
+        )
+      }
+
+      it "fetches access token from the proc" do
+        stub_submit_message(token: "proc-access-token")
+
+        mail = Mail.new(to: "john@example.com")
+        subject.deliver!(mail)
+
+        expect(
+          a_request(:post, "https://api.flowmailer.net/1337/messages/submit")
+          .with { |req|
+            req.headers["Authorization"] == "Bearer proc-access-token"
+          }
+        ).to have_been_made.once
+      end
+
+      it "fetches new access token from the proc" do
+        stub_submit_message(token: "proc-access-token", status: 401)
+        stub_submit_message(token: "newproc-access-token")
+
+        mail = Mail.new(to: "john@example.com")
+        subject.deliver!(mail)
+
+        expect(
+          a_request(:post, "https://api.flowmailer.net/1337/messages/submit")
+          .with { |req|
+            req.headers["Authorization"] == "Bearer newproc-access-token"
+          }
+        ).to have_been_made.once
+      end
+    end
+
     context "with valid access_token" do
       before do
         stub_access_token

@@ -61,21 +61,29 @@ module FlowmailerRails
     end
 
     def access_token
-      @access_token ||= fetch_new_access_token
+      if settings[:access_token]
+        settings[:access_token].call
+      else
+        @access_token ||= fetch_new_access_token
+      end
     end
 
     def fetch_new_access_token
-      response = oauth_client.post(
-        "oauth/token",
-        client_id: settings[:client_id],
-        client_secret: settings[:client_secret],
-        grant_type: "client_credentials",
-        scope: "api"
-      )
-      if response.success?
-        @access_token = response.body["access_token"]
+      if settings[:fetch_new_access_token]
+        settings[:fetch_new_access_token].call
       else
-        raise NoAccessTokenError, response.body
+        response = oauth_client.post(
+          "oauth/token",
+          client_id: settings[:client_id],
+          client_secret: settings[:client_secret],
+          grant_type: "client_credentials",
+          scope: "api"
+        )
+        if response.success?
+          @access_token = response.body["access_token"]
+        else
+          raise NoAccessTokenError, response.body
+        end
       end
     end
 
