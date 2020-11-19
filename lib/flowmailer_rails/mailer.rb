@@ -5,6 +5,7 @@ module FlowmailerRails
   class Mailer
     class NoAccessTokenError < StandardError; end
     class DeliveryError < StandardError; end
+    class ExpiredAccessTokenError < StandardError; end
 
     OAUTH_ENDPOINT = "https://login.flowmailer.net".freeze
     API_ENDPOINT = "https://api.flowmailer.net".freeze
@@ -17,9 +18,7 @@ module FlowmailerRails
 
     def deliver!(rails_mail)
       MailConverter.new(rails_mail).recipients_as_json.each do |json|
-        response = submit_message(path, json, authorization_header)
-        raise DeliveryError, response.body unless response.success?
-
+        response = submit_message(json)
         rails_mail.message_id = response.headers["location"].split("/").last
       end
     end
@@ -34,8 +33,23 @@ module FlowmailerRails
       {Authorization: "Bearer #{access_token}"}
     end
 
-    def submit_message(*args)
-      api_client.post(*args)
+    def submit_message(json)
+      retries = 0
+      begin
+        response = api_client.post(path, json, authorization_header)
+
+        raise ExpiredAccessTokenError if response.status == 401
+        raise DeliveryError, response.body unless response.success?
+      rescue ExpiredAccessTokenError
+        if (retries += 1) <= 3
+          fetch_new_access_token
+          retry
+        else
+          raise
+        end
+      end
+
+      response
     end
 
     def api_client
@@ -47,6 +61,10 @@ module FlowmailerRails
     end
 
     def access_token
+      @access_token ||= fetch_new_access_token
+    end
+
+    def fetch_new_access_token
       response = oauth_client.post(
         "oauth/token",
         client_id: settings[:client_id],
@@ -55,7 +73,7 @@ module FlowmailerRails
         scope: "api"
       )
       if response.success?
-        response.body["access_token"]
+        @access_token = response.body["access_token"]
       else
         raise NoAccessTokenError, response.body
       end

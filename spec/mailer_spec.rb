@@ -23,15 +23,39 @@ RSpec.describe FlowmailerRails::Mailer do
 
       it "makes a api request for each recipient" do
         mail = Mail.new(to: "test@example.com; foo@example.com")
-        expect(subject).to receive(:submit_message) { |path, body, headers|
-          expect(JSON.parse(body)).to include_json(recipientAddress: "test@example.com")
+        expect(subject).to receive(:submit_message) { |json|
+          expect(JSON.parse(json)).to include_json(recipientAddress: "test@example.com")
         }.and_return(response_double)
 
-        expect(subject).to receive(:submit_message) { |path, body, headers|
-          expect(JSON.parse(body)).to include_json(recipientAddress: "foo@example.com")
+        expect(subject).to receive(:submit_message) { |json|
+          expect(JSON.parse(json)).to include_json(recipientAddress: "foo@example.com")
         }.and_return(response_double)
 
         subject.deliver!(mail)
+      end
+    end
+
+    context "with expired access_token" do
+      it "fetches a new token" do
+        stub_access_tokens(tokens: ["first-token", "second-token"])
+        stub_submit_message(status: 401, token: "first-token")
+        stub_submit_message(token: "second-token")
+
+        mail = Mail.new(to: "test@example.com")
+        subject.deliver!(mail)
+      end
+
+      it "retries 4 times before rasing an exception" do
+        stub_access_tokens(tokens: ["first-token", "second-token", "third-token", "forth-token"])
+        stub_submit_message(status: 401, token: "first-token")
+        stub_submit_message(status: 401, token: "second-token")
+        stub_submit_message(status: 401, token: "third-token")
+        stub_submit_message(status: 401, token: "forth-token")
+
+        mail = Mail.new(to: "test@example.com")
+        expect {
+          subject.deliver!(mail)
+        }.to raise_error(FlowmailerRails::Mailer::ExpiredAccessTokenError)
       end
     end
 
