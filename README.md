@@ -16,14 +16,36 @@ And then execute:
 
     $ bundle
 
-Or install it yourself as:
-
-    $ gem install FlowmailerRails
-
 ## Usage
 
-TODO: Write usage instructions here
+### Configuration
 
+Add basic configuration by providing it with your account id and client Id and Secret for an API source with submitt access.
+```ruby
+# config/production.rb
+config.action_mailer.flowmailer_settings = {
+  account_id: ENV["FLOWMAILER_ACCOUNT_ID"],
+  client_id: ENV["FLOWMAILER_CLIENT_ID"],
+  client_secret: ENV["FLOWMAILER_CLIENT_SECRET"],
+}
+```
+
+You can also provide procs that handles the `access_token` retrieval if you already have that logic in your Rails app:
+```ruby
+# config/production.rb
+config.action_mailer.flowmailer_settings = {
+  account_id: ENV["FLOWMAILER_ACCOUNT_ID"],
+  access_token: -> { FooBar.access_token },
+  fetch_new_access_token: -> { FooBar.fetch_new_access_token },
+}
+```
+
+Tell Rails to use Flowmailer as the delivery method
+
+```ruby
+# config/production.rb
+config.action_mailer.delivery_method = :flowmailer
+```
 ## Development
 
 After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
