@@ -10,6 +10,14 @@ RSpec.describe FlowmailerRails::MailConverter do
   let(:subject) { described_class.new(mail) }
 
   describe "#recipients_as_json" do
+    context "with no recipient" do
+      let(:mail) { default_mail.tap { |m| m.to = "" } }
+      it "returns a json object for that recipient" do
+        result = subject.recipients_as_json
+        expect(result.size).to eq(0)
+      end
+    end
+
     context "with one recipient" do
       let(:mail) { default_mail }
       it "returns a json object for that recipient" do
