@@ -109,5 +109,36 @@ RSpec.describe FlowmailerRails::Mailer do
         }.to raise_error(FlowmailerRails::Mailer::NoAccessTokenError)
       end
     end
+
+    context 'with unsuccessful response' do
+      before do
+        stub_access_token
+        stub_request(:post, "https://api.flowmailer.net/1337/messages/submit")
+          .to_return(status: 420, body: "")
+      end
+
+      it 'raises DeliveryError' do
+        mail = Mail.new(to: 'john@example.com')
+
+        expect { subject.deliver!(mail) }.to raise_error(FlowmailerRails::Mailer::DeliveryError)
+      end
+    end
+
+    context 'with too big message' do
+      let(:mailer) { described_class.new(account_id: 1337, client_id: 'client-123', client_secret: 'secret-123') }
+
+      before do
+        stub_access_token
+        response_body = { allErrors: [{ code: "message.toobig", defaultMessage: "Message too big 10658211 > 10485760" }]}
+        stub_request(:post, "https://api.flowmailer.net/1337/messages/submit")
+          .to_return(status: 422, body: response_body.to_json, headers: { "Content-type": "application/json" })
+      end
+
+      it 'raises TooBigMessageError' do
+        mail = Mail.new(to: 'john@example.com')
+
+        expect { mailer.deliver!(mail) }.to raise_error(FlowmailerRails::Mailer::TooBigMessageError)
+      end
+    end
   end
 end
