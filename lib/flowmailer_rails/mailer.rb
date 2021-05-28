@@ -5,6 +5,7 @@ module FlowmailerRails
   class Mailer
     class NoAccessTokenError < StandardError; end
     class DeliveryError < StandardError; end
+    class TooBigMessageError < StandardError; end
     class ExpiredAccessTokenError < StandardError; end
 
     OAUTH_ENDPOINT = "https://login.flowmailer.net".freeze
@@ -39,7 +40,13 @@ module FlowmailerRails
         response = api_client.post(path, json, authorization_header)
 
         raise ExpiredAccessTokenError if response.status == 401
-        raise DeliveryError, response.body unless response.success?
+
+        unless response.success?
+          too_big_error = response.body&.dig("allErrors")&.find { |error| error["code"] == "message.toobig" }
+          raise TooBigMessageError, too_big_error["defaultMessage"] if too_big_error.present?
+
+          raise DeliveryError, response.body
+        end
       rescue ExpiredAccessTokenError
         if (retries += 1) <= 3
           fetch_new_access_token
