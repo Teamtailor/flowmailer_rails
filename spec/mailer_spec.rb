@@ -114,7 +114,21 @@ RSpec.describe FlowmailerRails::Mailer do
       before do
         stub_access_token
         stub_request(:post, "https://api.flowmailer.net/1337/messages/submit")
-          .to_return(status: 420, body: "")
+          .to_return(status: 420, body: "hej")
+      end
+
+      it "raises DeliveryError" do
+        mail = Mail.new(to: "john@example.com")
+
+        expect { subject.deliver!(mail) }.to raise_error(FlowmailerRails::Mailer::DeliveryError)
+      end
+    end
+
+    context "with empty body" do
+      before do
+        stub_access_token
+        stub_request(:post, "https://api.flowmailer.net/1337/messages/submit")
+          .to_return(status: 420, body: nil)
       end
 
       it "raises DeliveryError" do

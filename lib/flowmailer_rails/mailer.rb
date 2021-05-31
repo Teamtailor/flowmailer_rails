@@ -39,7 +39,7 @@ module FlowmailerRails
       begin
         response = api_client.post(path, json, authorization_header)
 
-        handle_failure(response) unless response.success? && response.status < 400
+        handle_failure(response)
       rescue ExpiredAccessTokenError
         if (retries += 1) <= 3
           fetch_new_access_token
@@ -53,9 +53,12 @@ module FlowmailerRails
     end
 
     def handle_failure(response)
+      return if response.success?
+
       raise ExpiredAccessTokenError if response.status == 401
 
-      too_big_error = response.body["allErrors"]&.find { |error| error["code"] == "message.toobig" }
+      too_big_error = response.body&.[]("allErrors")&.find { |error| error["code"] == "message.toobig" }
+
       raise TooBigMessageError, too_big_error["defaultMessage"] if too_big_error.present?
 
       raise DeliveryError, response.body
