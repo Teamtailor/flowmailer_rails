@@ -27,7 +27,7 @@ Gem::Specification.new do |spec|
   spec.require_paths = ["lib"]
 
   spec.add_dependency("actionmailer", ">= 3.0.0")
-  spec.add_dependency("faraday", ">= 0.7.4", "< 1.0")
+  spec.add_dependency("faraday", ">= 0.7.4")
   spec.add_dependency("faraday_middleware")
 
   spec.add_development_dependency "bundler", "~> 2.0"
