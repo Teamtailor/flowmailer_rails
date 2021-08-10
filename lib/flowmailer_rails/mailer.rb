@@ -4,8 +4,11 @@ require "faraday_middleware"
 module FlowmailerRails
   class Mailer
     class NoAccessTokenError < StandardError; end
+
     class DeliveryError < StandardError; end
+
     class TooBigMessageError < DeliveryError; end
+
     class ExpiredAccessTokenError < StandardError; end
 
     OAUTH_ENDPOINT = "https://login.flowmailer.net".freeze
