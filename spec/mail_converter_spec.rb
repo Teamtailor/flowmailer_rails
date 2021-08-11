@@ -56,6 +56,30 @@ RSpec.describe FlowmailerRails::MailConverter do
             )
           end
         end
+
+        context "without tags" do
+          let(:mail) { default_mail.tap { |m| m.tags = nil } }
+
+          it "passes nil to the json" do
+            result = subject.recipients_as_json
+            json = JSON.parse(result.first)
+            expect(json).to include_json(
+              tags: nil
+            )
+          end
+        end
+
+        context "with an empty tag array" do
+          let(:mail) { default_mail.tap { |m| m.tags = [] } }
+
+          it "passes nil to the json" do
+            result = subject.recipients_as_json
+            json = JSON.parse(result.first)
+            expect(json).to include_json(
+              tags: nil
+            )
+          end
+        end
       end
     end
 
