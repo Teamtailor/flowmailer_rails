@@ -49,4 +49,11 @@ Rails.application.configure do
   # Use an evented file watcher to asynchronously detect changes in source code,
   # routes, locales, etc. This feature depends on the listen gem.
   # config.file_watcher = ActiveSupport::EventedFileUpdateChecker
+  config.action_mailer.delivery_method = :flowmailer
+
+  config.action_mailer.flowmailer_settings = {
+    account_id: ENV["FLOWMAILER_ACCOUNT_ID"],
+    client_id: ENV["FLOWMAILER_CLIENT_ID"],
+    client_secret: ENV["FLOWMAILER_CLIENT_SECRET"]
+  }
 end
