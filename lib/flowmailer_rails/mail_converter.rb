@@ -20,7 +20,8 @@ module FlowmailerRails
       @json ||= {
         messageType: "EMAIL",
         mimedata: mimedata,
-        senderAddress: sender_address
+        senderAddress: sender_address,
+        tags: rails_mail.tags
       }
     end
 

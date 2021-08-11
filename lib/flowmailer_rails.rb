@@ -1,6 +1,7 @@
 require "action_mailer"
 require "flowmailer_rails/mailer"
 require "flowmailer_rails/mail_converter"
+require "flowmailer_rails/message_extensions/mail"
 
 module FlowmailerRails
   def self.install

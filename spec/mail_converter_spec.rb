@@ -12,7 +12,7 @@ RSpec.describe FlowmailerRails::MailConverter do
   describe "#recipients_as_json" do
     context "with no recipient" do
       let(:mail) { default_mail.tap { |m| m.to = "" } }
-      it "returns a json object for that recipient" do
+      it "returns an empty json object" do
         result = subject.recipients_as_json
         expect(result.size).to eq(0)
       end
@@ -30,6 +30,56 @@ RSpec.describe FlowmailerRails::MailConverter do
           recipientAddress: "john.doe@example.com",
           mimedata: "RGF0ZTogRnJpLCAwMSBKYW4gMjAxMCAxMjowMDowMCArMDAwMA0KRnJvbTog\nbm8tcmVwbHlAZXhhbXBsZS5jb20NClRvOiBqb2huLmRvZUBleGFtcGxlLmNv\nbQ0KTWVzc2FnZS1JRDogMTMzNw0KTWltZS1WZXJzaW9uOiAxLjANCkNvbnRl\nbnQtVHlwZTogdGV4dC9wbGFpbg0KQ29udGVudC1UcmFuc2Zlci1FbmNvZGlu\nZzogN2JpdA0KDQo=\n"
         )
+      end
+
+      describe "tags" do
+        context "with a single tag" do
+          let(:mail) { default_mail.tap { |m| m.tags = ["welcome"] } }
+
+          it "passes the tag to the json" do
+            result = subject.recipients_as_json
+            json = JSON.parse(result.first)
+            expect(json).to include_json(
+              tags: ["welcome"]
+            )
+          end
+        end
+
+        context "with multiple tags" do
+          let(:mail) { default_mail.tap { |m| m.tags = ["welcome", "user"] } }
+
+          it "passes the tag to the json" do
+            result = subject.recipients_as_json
+            json = JSON.parse(result.first)
+            expect(json).to include_json(
+              tags: ["welcome", "user"]
+            )
+          end
+        end
+
+        context "without tags" do
+          let(:mail) { default_mail.tap { |m| m.tags = nil } }
+
+          it "passes nil to the json" do
+            result = subject.recipients_as_json
+            json = JSON.parse(result.first)
+            expect(json).to include_json(
+              tags: nil
+            )
+          end
+        end
+
+        context "with an empty tag array" do
+          let(:mail) { default_mail.tap { |m| m.tags = [] } }
+
+          it "passes nil to the json" do
+            result = subject.recipients_as_json
+            json = JSON.parse(result.first)
+            expect(json).to include_json(
+              tags: nil
+            )
+          end
+        end
       end
     end
 
